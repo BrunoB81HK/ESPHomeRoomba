@@ -252,27 +252,34 @@ enum class RoombaOIMode : uint8_t {
   Full = 3,
 };
 
-class RoombaComponent : public PollingComponent, public CustomAPIDevice, public UARTDevice {
+class RoombaComponent : public PollingComponent, public CustomAPIDevice {
  public:
+  // ESPHome
   void setup() override;
   void update() override;
   void dump_config() override;
 
+  // Setters
   void set_brc_pin(uint8_t pin) { this->brc_pin_ = brc_pin; }
   void set_lazy_650(bool enabled) { this->lazy_650_enabled_ = enabled; }
-  void set_uart(uart::UARTComponent *uart);
+  void set_uart(uart::UARTComponent *uart) { this->uart_ = uart; }
 
+  // Getters
   bool is_ready() { return this->ready_; }
 
   void send_command(std::string command) { on_command(command); }
 
  private:
-  uint8_t brc_pin_{0};
-  bool lazy_650_enabled_{false};
+  // UART
+  void available() { this->uart_->available(); }
+  void flush() { this->uart_->flush(); }
+  void write(RoombaCommands command, void *data, size_t size);
+  void write(RoombaCommands command) { this->write(command, nullptr, 0); }
+  template<typename T> void write(RoombaCommands command, T data) { this->write(command, &data, sizeof(data)); }
+
   uart::UARTComponent *uart_{nullptr};
 
-  bool ready_{false};
-
+private:
   // Sensors
 
   // Binary Sensors
@@ -284,6 +291,11 @@ class RoombaComponent : public PollingComponent, public CustomAPIDevice, public 
   bool was_cleaning_ = false;
   bool was_docked_ = false;
   int16_t speed_ = 0;
+
+ private:
+  uint8_t brc_pin_{0};
+  bool lazy_650_enabled_{false};
+  bool ready_{false};
 };
 
 class RoombaClient {

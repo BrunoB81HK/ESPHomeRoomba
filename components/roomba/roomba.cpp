@@ -6,7 +6,8 @@
 namespace esphome {
 namespace roomba {
 
-static const char *const TAG = "roomba";
+constexpr std::string_view TAG = "roomba";
+constexpr int WAKE_UP_INTERVAL = 50000;
 
 void RoombaComponent::setup() {
   if (this->lazy_650_enabled_) {
@@ -22,13 +23,13 @@ void RoombaComponent::setup() {
 
 void RoombaComponent::update() {
   if (this->lazy_650_enabled_) {
-    long now = millis();
     // Wakeup the roomba at fixed intervals
-    if (now - lastWakeupTime > 50000) {
-      ESP_LOGD("roomba", "Time to wakeup");
-      lastWakeupTime = now;
-      if (!wasCleaning) {
-        if (wasDocked) {
+    long now = millis();
+    if (now - this->last_wakeup_time_ > WAKE_UP_INTERVAL) {
+      ESP_LOGD(TAG, "Time to wakeup");
+      this->last_wakeup_time_ = now;
+      if (!this->was_cleaning_) {
+        if (this->was_docked_) {
           wake_on_dock();
         } else {
           brc_wakeup();
@@ -48,7 +49,11 @@ void RoombaComponent::update() {
   int16_t mainBrushCurrent;
   int16_t sideBrushCurrent;
 
-  flush();
+  // Flush the serial buffer
+  this->flush();
+
+  // Get sensor values
+  this->write(RoombaCommands::Sensors, RoombaSensorPackets::Group7to58);
 
   uint8_t sensors[] = {
       SensorChargingState,      SensorVoltage, SensorCurrent,          SensorBatteryCharge,    SensorBatteryCapacity,
@@ -139,6 +144,15 @@ void RoombaComponent::dump_config() {
   LOG_SENSOR("  ", "Sensor", this->sensor_);
   ESP_LOGCONFIG(TAG, "  Upper threshold: %.11f", this->upper_threshold_);
   ESP_LOGCONFIG(TAG, "  Lower threshold: %.11f", this->lower_threshold_);
+}
+
+void RoombaComponent::flush() { this->uart_->flush(); }
+
+void RoombaComponent::write(RoombaCommands command) { this->uart_->write(static_cast<uint8_t>(command)); }
+
+void RoombaComponent::write(RoombaCommands command, void *data, size_t size) {
+  this->uart_->write(static_cast<uint8_t>(command));
+  this->uart_->write_array(static_cast<uint8_t *>(data), size);
 }
 
 }  // namespace roomba
