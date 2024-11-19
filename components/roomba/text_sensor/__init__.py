@@ -3,7 +3,6 @@ import esphome.config_validation as cv
 from esphome.components import text_sensor
 from esphome.const import (
     CONF_ID,
-    DEVICE_CLASS_RUNNING,
     ENTITY_CATEGORY_NONE,
 )
 
