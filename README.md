@@ -95,4 +95,3 @@ target: {}
 ```
 
 I then linked this switch to the Vacuum button on the Roomba Dashboard (this button uses the toggle action).
-

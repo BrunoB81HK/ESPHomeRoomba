@@ -115,7 +115,7 @@ sensor:
         unit_of_measurement: "A"
         icon: mdi:lightning-bolt
         accuracy_decimals: 2
-       
+
 text_sensor:
   - platform: custom
     lambda: |-
@@ -196,4 +196,3 @@ button:
       then:
         - lambda: |-
             static_cast< RoombaComponent*> (id(my_roomba).get_component(0))->send_command("rotate_right");
-
