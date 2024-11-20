@@ -53,11 +53,11 @@ void RoombaComponent::update() {
     return;
   }
 
-  this->sensors_values = std::move(tmp_sensors_values);
+  this->sensors_values_ = std::move(tmp_sensors_values);
 
   // Set the activity
-  const auto &current = this->sensors_values.current;
-  const auto &charging = this->sensors_values.charging_state;
+  const auto &current = this->sensors_values_.current;
+  const auto &charging = this->sensors_values_.charging_state;
   bool isCharging = charging == RoombaChargeState::ReconditioningCharging ||
                     charging == RoombaChargeState::FullCharging || charging == RoombaChargeState::TrickleCharging;
 

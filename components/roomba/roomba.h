@@ -319,6 +319,10 @@ struct __attribute__((packed)) RoombaSensorsValues {
 };
 
 class RoombaComponent : public PollingComponent, public CustomAPIDevice {
+  friend class RoombaBinarySensor;
+  friend class RoombaSensor;
+  friend class RoombaTextSensor;
+
  public:
   // ESPHome
   void setup() override;
@@ -350,7 +354,7 @@ class RoombaComponent : public PollingComponent, public CustomAPIDevice {
 
   uart::UARTComponent *uart_{nullptr};
 
- public:
+ private:
   // Commands
   void reset() { this->write(RoombaCommands::Reset); }
   void start() { this->write(RoombaCommands::Start); }
@@ -389,7 +393,7 @@ class RoombaComponent : public PollingComponent, public CustomAPIDevice {
 
  private:
   // Sensors values
-  RoombaSensorsValues sensors_values;
+  RoombaSensorsValues sensors_values_;
 
  private:
   void brc_wakeup();
