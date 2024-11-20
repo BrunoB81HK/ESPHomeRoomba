@@ -10,15 +10,41 @@ void RoombaSensor::update() {}
 void RoombaSensor::dump_config() {
   ESP_LOGCONFIG(TAG, "Roomba Sensor:");
   LOG_UPDATE_INTERVAL(this);
-  LOG_SENSOR("  ", "Battery Voltage", this->voltage_sensor_);
-  LOG_SENSOR("  ", "Battery Current", this->current_sensor_);
-  LOG_SENSOR("  ", "Battery Charge", this->battery_charge_sensor_);
-  LOG_SENSOR("  ", "Battery Capacity", this->battery_capacity_sensor_);
-  LOG_SENSOR("  ", "Battery", this->battery_percent_sensor_);
-  LOG_SENSOR("  ", "Battery Temperature", this->battery_temperature_sensor_);
-  LOG_SENSOR("  ", "Drive Speed", this->drive_speed_sensor_);
-  LOG_SENSOR("  ", "Main Brush Current", this->main_brush_current_sensor_);
-  LOG_SENSOR("  ", "Side Brush Current", this->side_brush_current_sensor_);
+  LOG_SENSOR("  ", "Dirt Detect: ", this->dirt_detect_sensor_);
+  LOG_SENSOR("  ", "IR Byte Omni: ", this->ir_byte_omni_sensor_);
+  LOG_SENSOR("  ", "IR Byte Left: ", this->ir_byte_left_sensor_);
+  LOG_SENSOR("  ", "IR Byte Right: ", this->ir_byte_right_sensor_);
+  LOG_SENSOR("  ", "Distance: ", this->distance_sensor_);
+  LOG_SENSOR("  ", "Angle: ", this->angle_sensor_);
+  LOG_SENSOR("  ", "Voltage: ", this->voltage_sensor_);
+  LOG_SENSOR("  ", "Current: ", this->current_sensor_);
+  LOG_SENSOR("  ", "Battery Temperature: ", this->battery_temperature_sensor_);
+  LOG_SENSOR("  ", "Battery Charge: ", this->battery_charge_sensor_);
+  LOG_SENSOR("  ", "Battery Capacity: ", this->battery_capacity_sensor_);
+  LOG_SENSOR("  ", "Battery Percent: ", this->battery_percent_sensor_);
+  LOG_SENSOR("  ", "Wall Signal: ", this->wall_signal_sensor_);
+  LOG_SENSOR("  ", "Cliff Left Signal: ", this->cliff_left_signal_sensor_);
+  LOG_SENSOR("  ", "Cliff Front Left Signal: ", this->cliff_front_left_signal_sensor_);
+  LOG_SENSOR("  ", "Cliff Front Right Signal: ", this->cliff_front_right_signal_sensor_);
+  LOG_SENSOR("  ", "Cliff Right Signal: ", this->cliff_right_signal_sensor_);
+  LOG_SENSOR("  ", "Song Number: ", this->song_number_sensor_);
+  LOG_SENSOR("  ", "Number of Stream Packets: ", this->number_of_stream_packets_sensor_);
+  LOG_SENSOR("  ", "Requested Velocity: ", this->requested_velocity_sensor_);
+  LOG_SENSOR("  ", "Requested Radius: ", this->requested_radius_sensor_);
+  LOG_SENSOR("  ", "Requested Right Velocity: ", this->requested_right_velocity_sensor_);
+  LOG_SENSOR("  ", "Requested Left Velocity: ", this->requested_left_velocity_sensor_);
+  LOG_SENSOR("  ", "Left Encoder Counts: ", this->left_encoder_counts_sensor_);
+  LOG_SENSOR("  ", "Right Encoder Counts: ", this->right_encoder_counts_sensor_);
+  LOG_SENSOR("  ", "Light Bump Left Signal: ", this->light_bump_left_signal_sensor_);
+  LOG_SENSOR("  ", "Light Bump Front Left Signal: ", this->light_bump_front_left_signal_sensor_);
+  LOG_SENSOR("  ", "Light Bump Center Left Signal: ", this->light_bump_center_left_signal_sensor_);
+  LOG_SENSOR("  ", "Light Bump Center Right Signal: ", this->light_bump_center_right_signal_sensor_);
+  LOG_SENSOR("  ", "Light Bump Front Right Signal: ", this->light_bump_front_right_signal_sensor_);
+  LOG_SENSOR("  ", "Light Bump Right Signal: ", this->light_bump_right_signal_sensor_);
+  LOG_SENSOR("  ", "Left Motor Current: ", this->left_motor_current_sensor_);
+  LOG_SENSOR("  ", "Right Motor Current: ", this->right_motor_current_sensor_);
+  LOG_SENSOR("  ", "Main Brush Current: ", this->main_brush_current_sensor_);
+  LOG_SENSOR("  ", "Side Brush Current: ", this->side_brush_current_sensor_);
 }
 
 }  // namespace roomba
