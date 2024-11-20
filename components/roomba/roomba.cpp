@@ -6,7 +6,7 @@
 namespace esphome {
 namespace roomba {
 
-constexpr std::string_view TAG = "roomba";
+constexpr char *TAG = "roomba";
 constexpr int WAKE_UP_INTERVAL = 50000;
 
 void RoombaComponent::setup() {
@@ -32,127 +32,75 @@ void RoombaComponent::update() {
         if (this->was_docked_) {
           wake_on_dock();
         } else {
-          brc_wakeup();
+          this->brc_wakeup();
         }
       } else {
-        brc_wakeup();
+        this->brc_wakeup();
       }
     }
   }
-
-  uint8_t charging;
-  uint16_t voltage;
-  int16_t current;
-  uint16_t batteryCharge;
-  uint16_t batteryCapacity;
-  int16_t batteryTemperature;
-  int16_t mainBrushCurrent;
-  int16_t sideBrushCurrent;
 
   // Flush the serial buffer
   this->flush();
 
   // Get sensor values
-  this->write(RoombaCommands::Sensors, RoombaSensorPackets::Group7to58);
-
-  uint8_t sensors[] = {
-      SensorChargingState,      SensorVoltage, SensorCurrent,          SensorBatteryCharge,    SensorBatteryCapacity,
-      SensorBatteryTemperature, SensorOIMode,  SensorMainBrushCurrent, SensorSideBrushCurrent,
-  };
-
-  uint8_t values[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-
-  bool success = getSensorsList(sensors, sizeof(sensors), values, sizeof(values));
-  if (!success) {
-    ESP_LOGD("roomba", "Could not get sensor values from serial");
+  this->sensors(RoombaSensorPackets::Group7to58);
+  SensorsValues tmp_sensors_values;
+  if (!this->read(tmp_sensors_values)) {
+    ESP_LOGW(TAG, "Sensors values update failed");
     return;
   }
 
-  charging = values[0];
-  voltage = values[1] * 256 + values[2];
-  current = values[3] * 256 + values[4];
-  batteryCharge = values[5] * 256 + values[6];
-  batteryCapacity = values[7] * 256 + values[8];
-  batteryTemperature = values[9];
-  std::string oiMode = get_oimode(values[10]);
-  mainBrushCurrent = values[11] * 256 + values[12];
-  sideBrushCurrent = values[13] * 256 + values[14];
+  this->sensors_values = std::move(tmp_sensors_values);
 
-  std::string activity = get_activity(charging, current);
-  wasCleaning = activity == "Cleaning";
-  wasDocked = activity == "Docked";
+  // Set the activity
+  this->was_cleaning_ = false;
+  this->was_docked_ = false;
+  const auto &current = this->sensors_values.current;
 
-  float voltageData = 0.001 * roundf(voltage * 100) / 100;
-  if (this->voltageSensor->state != voltageData) {
-    this->voltageSensor->publish_state(voltageData);
-  }
-
-  float currentData = 0.001 * roundf(current * 100) / 100;
-  if (this->currentSensor->state != currentData) {
-    this->currentSensor->publish_state(currentData);
-  }
-
-  float charge = 0.001 * roundf(batteryCharge * 100) / 100;
-  if (this->batteryChargeSensor->state != charge) {
-    this->batteryChargeSensor->publish_state(charge);
-  }
-
-  float capacity = 0.001 * roundf(batteryCapacity * 100) / 100;
-  if (this->batteryCapacitySensor->state != capacity) {
-    this->batteryCapacitySensor->publish_state(capacity);
-  }
-
-  float battery_level = 100.0 * ((1.0 * charge) / (1.0 * capacity));
-  if (this->batteryPercentSensor->state != battery_level) {
-    this->batteryPercentSensor->publish_state(battery_level);
-  }
-
-  if (this->batteryTemperatureSensor->state != batteryTemperature) {
-    this->batteryTemperatureSensor->publish_state(batteryTemperature);
-  }
-
-  if (this->chargingState != charging) {
-    this->chargingState = charging;
-    this->chargingSensor->publish_state(ToString(charging));
-  }
-
-  if (activity.compare(this->activitySensor->state) != 0) {
-    this->activitySensor->publish_state(activity);
-  }
-
-  if (this->driveSpeedSensor->state != this->speed) {
-    this->driveSpeedSensor->publish_state(this->speed);
-  }
-
-  if (oiMode.compare(this->oiModeSensor->state) != 0) {
-    this->oiModeSensor->publish_state(oiMode);
-  }
-
-  float mainBrushCurrentData = 0.001 * (mainBrushCurrent * 100) / 100;
-  if (this->mainBrushCurrentSensor->state != mainBrushCurrentData) {
-    this->mainBrushCurrentSensor->publish_state(mainBrushCurrentData);
-  }
-
-  float sideBrushCurrentData = 0.001 * (sideBrushCurrent * 100) / 100;
-  if (this->sideBrushCurrentSensor->state != sideBrushCurrentData) {
-    this->sideBrushCurrentSensor->publish_state(sideBrushCurrentData);
-  }
+  if (current > -50)
+    this->was_docked_ = true;
+  else if (current < -300)
+    this->was_cleaning_ = true;
 }
 
-void RoombaComponent::dump_config() {
-  LOG_BINARY_SENSOR("", "Roomba Component", this);
-  LOG_SENSOR("  ", "Sensor", this->sensor_);
-  ESP_LOGCONFIG(TAG, "  Upper threshold: %.11f", this->upper_threshold_);
-  ESP_LOGCONFIG(TAG, "  Lower threshold: %.11f", this->lower_threshold_);
-}
-
-void RoombaComponent::flush() { this->uart_->flush(); }
-
-void RoombaComponent::write(RoombaCommands command) { this->uart_->write(static_cast<uint8_t>(command)); }
+void RoombaComponent::dump_config() {}
 
 void RoombaComponent::write(RoombaCommands command, void *data, size_t size) {
   this->uart_->write(static_cast<uint8_t>(command));
   this->uart_->write_array(static_cast<uint8_t *>(data), size);
+}
+
+bool RoombaComponent::read(void *data, size_t size) {
+  return this->uart_->read_array(reinterpret_cast<uint8_t *>(data), size);
+}
+
+void RoombaComponent::brc_wakeup() {
+  if (this->lazy_650_enabled_) {
+    ESP_LOGD(TAG, "brc_wakeup");
+    pinMode(this->brc_pin_, OUTPUT);
+    digitalWrite(this->brc_pin_, LOW);
+    delay(200);
+    pinMode(this->brc_pin_, OUTPUT);
+    delay(200);
+    this->start();
+  } else {
+    digitalWrite(this->brc_pin_, LOW);
+    delay(1000);
+    digitalWrite(this->brc_pin_, HIGH);
+    delay(100);
+  }
+}
+
+void RoombaComponent::wake_on_dock() {
+  ESP_LOGD(TAG, "wake_on_dock");
+  this->brc_wakeup();
+  // Some black magic from @AndiTheBest to keep the Roomba awake on the dock
+  // See https://github.com/johnboiles/esp-roomba-mqtt/issues/3#issuecomment-402096638
+  delay(10);
+  this->clean();
+  delay(150);
+  this->dock();
 }
 
 }  // namespace roomba

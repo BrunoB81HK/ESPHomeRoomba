@@ -11,8 +11,8 @@ enum class RoombaCommands : uint8_t {
   // Getting started
   Reset = 7,
   Start = 128,
-  Baud = 129,
   Stop = 173,
+  Baud = 129,
   // Mode
   Safe = 131,
   Full = 132,
@@ -272,30 +272,128 @@ class RoombaComponent : public PollingComponent, public CustomAPIDevice {
  private:
   // UART
   void available() { this->uart_->available(); }
+
   void flush() { this->uart_->flush(); }
+
   void write(RoombaCommands command, void *data, size_t size);
   void write(RoombaCommands command) { this->write(command, nullptr, 0); }
   template<typename T> void write(RoombaCommands command, T data) { this->write(command, &data, sizeof(data)); }
 
+  void read(void *data, size_t size);
+  template<typename T> void read(T &data) { this->read(&data, sizeof(data)); }
+
   uart::UARTComponent *uart_{nullptr};
 
-private:
-  // Sensors
-
-  // Binary Sensors
-
-  // Text Sensors
-
-  uint8_t charging_state_;
-  int last_wakeup_time_ = 0;
-  bool was_cleaning_ = false;
-  bool was_docked_ = false;
-  int16_t speed_ = 0;
+ public:
+  // Commands
+  void reset() { this->write(RoombaCommands::Reset); }
+  void start() { this->write(RoombaCommands::Start); }
+  void stop() { this->write(RoombaCommands::Stop); }
+  void baud(RoombaBaud baud) { this->write(RoombaCommands::Baud, baud); }
+  // Mode
+  void safe_mode() { this->write(RoombaCommands::Safe); }
+  void full_mode() { this->write(RoombaCommands::Full); }
+  // Cleaning
+  void clean() { this->write(RoombaCommands::Clean); }
+  void max() { this->write(RoombaCommands::Max); }
+  void spot() { this->write(RoombaCommands::Spot); }
+  void seek_dock() { this->write(RoombaCommands::SeekDock); }
+  void power() { this->write(RoombaCommands::Power); }
+  /*
+  void schedule() { this->write(RoombaCommands::Schedule); }
+  void set_day_time(RoombaWeekday day, uint8_t hour, uint8_t minute) { this->write(RoombaCommands::SetDayTime); }
+  */
+  // Actuator
+  /*
+  void drive() { this->write(RoombaCommands::Drive); }
+  void drive_direct() { this->write(RoombaCommands::DriveDirect); }
+  void drive_pwm() { this->write(RoombaCommands::DrivePWM); }
+  void motors() { this->write(RoombaCommands::Motors); }
+  void motors_pwm() { this->write(RoombaCommands::MotorsPWM); }
+  void le_ds() { this->write(RoombaCommands::LEDs); }
+  void le_ds_scheduling() { this->write(RoombaCommands::LEDsScheduling); }
+  void le_ds_digit_raw() { this->write(RoombaCommands::LEDsDigitRaw); }
+  void le_ds_digit_ascii() { this->write(RoombaCommands::LEDsDigitASCII); }
+  void buttons() { this->write(RoombaCommands::Buttons); }
+  void song() { this->write(RoombaCommands::Song); }
+  void play() { this->write(RoombaCommands::Play); }
+  */
+  // Input
+  void sensors(RoombaSensorPackets packet_id) { this->write(RoombaCommands::Sensors, packet_id); };
+  /*
+  void query_list() { this->write(RoombaCommands::QueryList); };
+  void stream() { this->write(RoombaCommands::Stream); };
+  void stream_pause_resume() { this->write(RoombaCommands::StreamPauseResume); };
+  void control() { this->write(RoombaCommands::Control); };
+  */
 
  private:
+  // Sensors values
+  struct __attribute__((packed)) SensorsValues {
+    uint8_t bumps_and_wheel_drops{0};
+    uint8_t wall{0};
+    uint8_t cliff_left{0};
+    uint8_t cliff_front_left{0};
+    uint8_t cliff_front_right{0};
+    uint8_t cliff_right{0};
+    uint8_t virtual_wall{0};
+    uint8_t wheel_overcurrents{0};
+    uint8_t dirt_detect{0};
+    uint8_t unused1{0};
+    uint8_t ir_byte_omni{0};
+    uint8_t ir_byte_left{0};
+    uint8_t ir_byte_right{0};
+    uint8_t buttons{0};
+    int16_t distance{0};
+    int16_t angle{0};
+    uint8_t charging_state{0};
+    uint16_t voltage{0};
+    int16_t current{0};
+    int8_t battery_temperature{0};
+    uint16_t battery_charge{0};
+    uint16_t battery_capacity{0};
+    uint16_t wall_signal{0};
+    uint16_t cliff_left_signal{0};
+    uint16_t cliff_front_left_signal{0};
+    uint16_t cliff_front_right_signal{0};
+    uint16_t cliff_right_signal{0};
+    uint32_t unused2{0};  // Should be uint24_t
+    uint16_t unused3{0};  // Should be uint24_t
+    uint8_t charging_sources_available{0};
+    uint8_t oi_mode{0};
+    uint8_t song_number{0};
+    uint8_t song_playing{0};
+    uint8_t number_of_stream_packets{0};
+    int16_t requested_velocity{0};
+    int16_t requested_radius{0};
+    int16_t requested_right_velocity{0};
+    int16_t requested_left_velocity{0};
+    int16_t left_encoder_counts{0};
+    int16_t right_encoder_counts{0};
+    uint8_t light_bumper{0};
+    uint16_t light_bump_left_signal{0};
+    uint16_t light_bump_front_left_signal{0};
+    uint16_t light_bump_center_left_signal{0};
+    uint16_t light_bump_center_right_signal{0};
+    uint16_t light_bump_front_right_signal{0};
+    uint16_t light_bump_right_signal{0};
+    int16_t left_motor_current{0};
+    int16_t right_motor_current{0};
+    int16_t main_brush_current{0};
+    int16_t side_brush_current{0};
+    int16_t stasis{0};
+  } sensors_values;
+
+ private:
+  void brc_wakeup();
+  void wake_on_dock();
+
   uint8_t brc_pin_{0};
   bool lazy_650_enabled_{false};
   bool ready_{false};
+  int last_wakeup_time_{0};
+  bool was_cleaning_{false};
+  bool was_docked_{false};
 };
 
 class RoombaClient {
