@@ -46,8 +46,8 @@ void RoombaComponent::update() {
   this->flush();
 
   // Get sensor values
-  this->sensors(RoombaSensorPackets::Group7to58);
-  RoombaSensorsValues tmp_sensors_values;
+  this->sensors(SensorPackets::Group7to58);
+  SensorsValues tmp_sensors_values;
   if (!this->read(tmp_sensors_values)) {
     ESP_LOGW(TAG, "Sensors values update failed");
     return;
@@ -58,26 +58,26 @@ void RoombaComponent::update() {
   // Set the activity
   const auto &current = this->sensors_values_.current;
   const auto &charging = this->sensors_values_.charging_state;
-  bool isCharging = charging == RoombaChargeState::ReconditioningCharging ||
-                    charging == RoombaChargeState::FullCharging || charging == RoombaChargeState::TrickleCharging;
+  bool is_charging = charging == ChargeState::ReconditioningCharging || charging == ChargeState::FullCharging ||
+                     charging == ChargeState::TrickleCharging;
 
   if (current > -50)
-    this->activity_ = RoombaActivity::Docked;
-  else if (isCharging)
-    this->activity_ = RoombaActivity::Charging;
+    this->activity_ = Activity::Docked;
+  else if (is_charging)
+    this->activity_ = Activity::Charging;
   else if (current < -300)
-    this->activity_ = RoombaActivity::Cleaning;
+    this->activity_ = Activity::Cleaning;
   else
-    this->activity_ = RoombaActivity::Lost;
+    this->activity_ = Activity::Lost;
 
-  this->was_cleaning_ = ths->activity_ == RoombaActivity::Cleaning;
-  this->was_docked_ = ths->activity_ == RoombaActivity::Docked;
+  this->was_cleaning_ = ths->activity_ == Activity::Cleaning;
+  this->was_docked_ = ths->activity_ == Activity::Docked;
 }
 
 void RoombaComponent::dump_config() {}
 
-void RoombaComponent::write(RoombaCommands command, void *data, size_t size) {
-  this->uart_->write(static_cast<uint8_t>(command));
+void RoombaComponent::write(Command command, void *data, size_t size) {
+  this->uart_->write(+command);
   this->uart_->write_array(static_cast<uint8_t *>(data), size);
 }
 
@@ -85,54 +85,54 @@ bool RoombaComponent::read(void *data, size_t size) {
   return this->uart_->read_array(reinterpret_cast<uint8_t *>(data), size);
 }
 
-void RoombaComponent::schedule(std::unordered_map<RoombaWeekday, std::pair<uint8_t, uint8_t>> schedule) {
+void RoombaComponent::schedule(std::unordered_map<Weekday, std::pair<uint8_t, uint8_t>> schedule) {
   std::array<uint8_t, 15> schedule_array;
   for (const auto &[day, time] : schedule) {
-    schedule_array[0] |= 1 << static_cast<uint8_t>(day);
+    schedule_array[0] |= 1 << +day;
 
-    size_t index = 2 + static_cast<uint8_t>(day) * 2;
+    size_t index = 2 + (+day) * 2;
     schedule_array[index] = time.first;
     schedule_array[index + 1] = time.second;
   }
 
-  this->write(RoombaCommands::Schedule, schedule_array, sizeof(schedule_array));
+  this->write(Command::Schedule, schedule_array, sizeof(schedule_array));
 }
 
-void RoombaComponent::set_day_time(RoombaWeekday day, uint8_t hour, uint8_t minute) {
-  this->write(RoombaCommands::SetDayTime, {static_cast<uint8_t>(day), hour, minutes}, 3);
+void RoombaComponent::set_day_time(Weekday day, uint8_t hour, uint8_t minute) {
+  this->write(Command::SetDayTime, {+day, hour, minutes}, 3);
 }
 
-void RoombaComponent::drive() { this->write(RoombaCommands::Drive); }
+void RoombaComponent::drive() { this->write(Command::Drive); }
 
-void RoombaComponent::drive_direct() { this->write(RoombaCommands::DriveDirect); }
+void RoombaComponent::drive_direct() { this->write(Command::DriveDirect); }
 
-void RoombaComponent::drive_pwm() { this->write(RoombaCommands::DrivePWM); }
+void RoombaComponent::drive_pwm() { this->write(Command::DrivePWM); }
 
-void RoombaComponent::motors() { this->write(RoombaCommands::Motors); }
+void RoombaComponent::motors() { this->write(Command::Motors); }
 
-void RoombaComponent::motors_pwm() { this->write(RoombaCommands::MotorsPWM); }
+void RoombaComponent::motors_pwm() { this->write(Command::MotorsPWM); }
 
-void RoombaComponent::leds() { this->write(RoombaCommands::LEDs); }
+void RoombaComponent::leds() { this->write(Command::LEDs); }
 
-void RoombaComponent::leds_scheduling() { this->write(RoombaCommands::LEDsScheduling); }
+void RoombaComponent::leds_scheduling() { this->write(Command::LEDsScheduling); }
 
-void RoombaComponent::leds_digit_raw() { this->write(RoombaCommands::LEDsDigitRaw); }
+void RoombaComponent::leds_digit_raw() { this->write(Command::LEDsDigitRaw); }
 
-void RoombaComponent::leds_digit_ascii() { this->write(RoombaCommands::LEDsDigitASCII); }
+void RoombaComponent::leds_digit_ascii() { this->write(Command::LEDsDigitASCII); }
 
-void RoombaComponent::buttons() { this->write(RoombaCommands::Buttons); }
+void RoombaComponent::buttons() { this->write(Command::Buttons); }
 
-void RoombaComponent::song() { this->write(RoombaCommands::Song); }
+void RoombaComponent::song() { this->write(Command::Song); }
 
-void RoombaComponent::play() { this->write(RoombaCommands::Play); }
+void RoombaComponent::play() { this->write(Command::Play); }
 
-void RoombaComponent::query_list() { this->write(RoombaCommands::QueryList); }
+void RoombaComponent::query_list() { this->write(Command::QueryList); }
 
-void RoombaComponent::stream() { this->write(RoombaCommands::Stream); }
+void RoombaComponent::stream() { this->write(Command::Stream); }
 
-void RoombaComponent::stream_pause_resume() { this->write(RoombaCommands::StreamPauseResume); }
+void RoombaComponent::stream_pause_resume() { this->write(Command::StreamPauseResume); }
 
-void RoombaComponent::control() { this->write(RoombaCommands::Control); }
+void RoombaComponent::control() { this->write(Command::Control); }
 
 void RoombaComponent::brc_wakeup() {
   if (this->lazy_650_enabled_) {

@@ -5,49 +5,49 @@ namespace roomba {
 
 static const char *const TAG = "roomba.text_sensor";
 
-inline std::string_view to_string(RoombaActivity activity) {
+inline std::string_view to_string(Activity activity) {
   switch (activity) {
-    case RoombaActivity::Docked:
+    case Activity::Docked:
       return "Docked";
-    case RoombaActivity::Charging:
+    case Activity::Charging:
       return "Charging";
-    case RoombaActivity::Cleaning:
+    case Activity::Cleaning:
       return "Cleaning";
-    case RoombaActivity::Lost:
+    case Activity::Lost:
       return "Lost";
     default:
       return "Unknown Activity";
   }
 }
 
-inline std::string_view to_string(RoombaChargeState charge_state) {
+inline std::string_view to_string(ChargeState charge_state) {
   switch (charge_state) {
-    case RoombaChargeState::NotCharging:
+    case ChargeState::NotCharging:
       return "NotCharging";
-    case RoombaChargeState::ReconditioningCharging:
+    case ChargeState::ReconditioningCharging:
       return "ReconditioningCharging";
-    case RoombaChargeState::FullCharging:
+    case ChargeState::FullCharging:
       return "FullCharging";
-    case RoombaChargeState::TrickleCharging:
+    case ChargeState::TrickleCharging:
       return "TrickleCharging";
-    case RoombaChargeState::Waiting:
+    case ChargeState::Waiting:
       return "Waiting";
-    case RoombaChargeState::Fault:
+    case ChargeState::Fault:
       return "Fault";
     default:
       return "Unknown Charging State";
   }
 }
 
-inline std::string_view to_string(RoombaOIMode oi_mode) {
+inline std::string_view to_string(OIMode oi_mode) {
   switch (oi_mode) {
-    case RoombaOIMode::Off:
+    case OIMode::Off:
       return "Off";
-    case RoombaOIMode::Passive:
+    case OIMode::Passive:
       return "Passive";
-    case RoombaOIMode::Safe:
+    case OIMode::Safe:
       return "Safe";
-    case RoombaOIMode::Full:
+    case OIMode::Full:
       return "Full";
     default:
       return "Unknown OI Mode";
@@ -64,7 +64,7 @@ void RoombaTextSensor::update() {
   }
 
   if (this->charging_state_sensor_ != nullptr) {
-    auto charging_state = to_string(static_cast<RoombaChargeState>(this->roomba_->sensors_values_.charging_state));
+    auto charging_state = to_string(+this->roomba_->sensors_values_.charging_state);
 
     if (charging_state != this->charging_state_sensor_->state) {
       this->charging_state_sensor_->publish_state(charging_state);
@@ -72,7 +72,7 @@ void RoombaTextSensor::update() {
   }
 
   if (this->oi_mode_sensor_ != nullptr) {
-    auto oi_mode = to_string(static_cast<RoombaOIMode>(this->roomba_->sensors_values_.oi_mode));
+    auto oi_mode = to_string(+this->roomba_->sensors_values_.oi_mode);
 
     if (oi_mode != this->oi_mode_sensor_->state) {
       this->oi_mode_sensor_->publish_state(oi_mode);

@@ -17,7 +17,10 @@ class RoombaBinarySensor : public PollingComponent, public RoombaClient {
   binary_sensor::BinarySensor *vacuum_sensor_{nullptr};
 
   /*
-    uint8_t bumps_and_wheel_drops{0};            // Binary sensors
+    uint8_t wheel_drop_left{0};            // Binary sensor
+    uint8_t wheel_drop_right{0};            // Binary sensor
+    uint8_t bumps_left{0};            // Binary sensor
+    uint8_t bumps_right{0};            // Binary sensor
     uint8_t wall{0};                             // Binary sensor
     uint8_t cliff_left{0};                       // Binary sensor
     uint8_t cliff_front_left{0};                 // Binary sensor
