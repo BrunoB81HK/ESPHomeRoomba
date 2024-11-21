@@ -4,17 +4,17 @@
 #include <unordered_map>
 #include <utility>
 
+#include "esphome.h"
 #include "esphome/core/component.h"
-#include "esphome/components/sensor/sensor.h"
 #include "esphome/components/uart/uart.h"
 
-#include "utils/enums.h"
-#include "utils/structs.h"
+#include "roomba_enums.h"
+#include "roomba_structs.h"
 
 namespace esphome {
 namespace roomba {
 
-class RoombaComponent : public PollingComponent, public CustomAPIDevice {
+class RoombaComponent : public PollingComponent {
   friend class RoombaBinarySensor;
   friend class RoombaSensor;
   friend class RoombaTextSensor;
@@ -26,14 +26,12 @@ class RoombaComponent : public PollingComponent, public CustomAPIDevice {
   void dump_config() override;
 
   // Setters
-  void set_brc_pin(uint8_t pin) { this->brc_pin_ = brc_pin; }
+  void set_brc_pin(uint8_t pin) { this->brc_pin_ = pin; }
   void set_lazy_650(bool enabled) { this->lazy_650_enabled_ = enabled; }
   void set_uart(uart::UARTComponent *uart) { this->uart_ = uart; }
 
   // Getters
   bool is_ready() { return this->ready_; }
-
-  void send_command(std::string command) { on_command(command); }
 
  protected:
   // UART
