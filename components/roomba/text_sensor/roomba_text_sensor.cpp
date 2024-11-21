@@ -7,7 +7,7 @@ namespace roomba {
 
 static const char *const TAG = "roomba.text_sensor";
 
-inline std::string to_string(Activity activity) {
+constexpr const char *to_string(Activity activity) {
   switch (activity) {
     case Activity::Docked:
       return "Docked";
@@ -22,7 +22,7 @@ inline std::string to_string(Activity activity) {
   }
 }
 
-inline std::string to_string(ChargeState charge_state) {
+constexpr const char *to_string(ChargeState charge_state) {
   switch (charge_state) {
     case ChargeState::NotCharging:
       return "NotCharging";
@@ -41,7 +41,7 @@ inline std::string to_string(ChargeState charge_state) {
   }
 }
 
-inline std::string to_string(OIMode oi_mode) {
+constexpr const char *to_string(OIMode oi_mode) {
   switch (oi_mode) {
     case OIMode::Off:
       return "Off";
@@ -57,6 +57,9 @@ inline std::string to_string(OIMode oi_mode) {
 }
 
 void RoombaTextSensor::update() {
+  if (!this->is_ready()) {
+    return;
+  }
   if (this->activity_sensor_ != nullptr) {
     auto activity = to_string(this->roomba_->activity_);
 

@@ -5,7 +5,11 @@ namespace roomba {
 
 static const char *const TAG = "roomba.sensor";
 
-void RoombaSensor::update() {}
+void RoombaSensor::update() {
+  if (!this->is_ready()) {
+    return;
+  }
+}
 
 void RoombaSensor::dump_config() {
   ESP_LOGCONFIG(TAG, "Roomba Sensor:");
