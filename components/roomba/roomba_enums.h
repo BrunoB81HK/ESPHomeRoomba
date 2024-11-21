@@ -6,9 +6,10 @@
 namespace esphome {
 namespace roomba {
 
-template<typename T>
-constexpr auto operator+(T e) noexcept -> std::enable_if<std::is_enum<T>::value, std::underlying_type<T>::type> {
-  return static_cast<std::underlying_type<T>::type>(e);
+template<typename Enum, typename std::enable_if<std::is_enum<Enum>::value, bool>::type = true>
+constexpr typename std::underlying_type<Enum>::type operator+(Enum e) noexcept {
+  using underlying = typename std::underlying_type<Enum>::type;
+  return static_cast<underlying>(e);
 }
 
 enum class Command : uint8_t {

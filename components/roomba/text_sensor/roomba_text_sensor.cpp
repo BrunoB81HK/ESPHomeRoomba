@@ -1,11 +1,13 @@
 #include "roomba_text_sensor.h"
 
+#include <string>
+
 namespace esphome {
 namespace roomba {
 
 static const char *const TAG = "roomba.text_sensor";
 
-inline std::string_view to_string(Activity activity) {
+inline std::string to_string(Activity activity) {
   switch (activity) {
     case Activity::Docked:
       return "Docked";
@@ -20,7 +22,7 @@ inline std::string_view to_string(Activity activity) {
   }
 }
 
-inline std::string_view to_string(ChargeState charge_state) {
+inline std::string to_string(ChargeState charge_state) {
   switch (charge_state) {
     case ChargeState::NotCharging:
       return "NotCharging";
@@ -39,7 +41,7 @@ inline std::string_view to_string(ChargeState charge_state) {
   }
 }
 
-inline std::string_view to_string(OIMode oi_mode) {
+inline std::string to_string(OIMode oi_mode) {
   switch (oi_mode) {
     case OIMode::Off:
       return "Off";
@@ -64,7 +66,7 @@ void RoombaTextSensor::update() {
   }
 
   if (this->charging_state_sensor_ != nullptr) {
-    auto charging_state = to_string(+this->roomba_->sensors_values_.charging_state);
+    auto charging_state = to_string(static_cast<ChargeState>(this->roomba_->sensors_values_.charging_state));
 
     if (charging_state != this->charging_state_sensor_->state) {
       this->charging_state_sensor_->publish_state(charging_state);
@@ -72,7 +74,7 @@ void RoombaTextSensor::update() {
   }
 
   if (this->oi_mode_sensor_ != nullptr) {
-    auto oi_mode = to_string(+this->roomba_->sensors_values_.oi_mode);
+    auto oi_mode = to_string(static_cast<OIMode>(this->roomba_->sensors_values_.oi_mode));
 
     if (oi_mode != this->oi_mode_sensor_->state) {
       this->oi_mode_sensor_->publish_state(oi_mode);

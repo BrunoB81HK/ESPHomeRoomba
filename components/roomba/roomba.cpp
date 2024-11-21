@@ -8,7 +8,7 @@
 namespace esphome {
 namespace roomba {
 
-constexpr char *TAG = "roomba";
+static const char *TAG = "roomba";
 constexpr int WAKE_UP_INTERVAL = 50000;
 
 void RoombaComponent::setup() {
@@ -57,7 +57,7 @@ void RoombaComponent::update() {
 
   // Set the activity
   const auto &current = this->sensors_values_.current;
-  const auto &charging = this->sensors_values_.charging_state;
+  const auto &charging = static_cast<ChargeState>(this->sensors_values_.charging_state);
   bool is_charging = charging == ChargeState::ReconditioningCharging || charging == ChargeState::FullCharging ||
                      charging == ChargeState::TrickleCharging;
 
@@ -70,15 +70,15 @@ void RoombaComponent::update() {
   else
     this->activity_ = Activity::Lost;
 
-  this->was_cleaning_ = ths->activity_ == Activity::Cleaning;
-  this->was_docked_ = ths->activity_ == Activity::Docked;
+  this->was_cleaning_ = this->activity_ == Activity::Cleaning;
+  this->was_docked_ = this->activity_ == Activity::Docked;
 }
 
 void RoombaComponent::dump_config() {}
 
 void RoombaComponent::write(Command command, void *data, size_t size) {
   this->uart_->write(+command);
-  this->uart_->write_array(static_cast<uint8_t *>(data), size);
+  this->uart_->write_array(reinterpret_cast<uint8_t *>(data), size);
 }
 
 bool RoombaComponent::read(void *data, size_t size) {
@@ -159,7 +159,7 @@ void RoombaComponent::wake_on_dock() {
   delay(10);
   this->clean();
   delay(150);
-  this->dock();
+  this->seek_dock();
 }
 
 }  // namespace roomba

@@ -43,8 +43,8 @@ class RoombaComponent : public PollingComponent {
   void write(Command command) { this->write(command, nullptr, 0); }
   template<typename T> void write(Command command, T data) { this->write(command, &data, sizeof(data)); }
 
-  void read(void *data, size_t size);
-  template<typename T> void read(T &data) { this->read(&data, sizeof(data)); }
+  bool read(void *data, size_t size);
+  template<typename T> bool read(T &data) { return this->read(&data, sizeof(data)); }
 
   uart::UARTComponent *uart_{nullptr};
 
