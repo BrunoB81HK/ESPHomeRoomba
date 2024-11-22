@@ -1,0 +1,70 @@
+esphome:
+  name: roomba
+  platformio_options:
+    build_flags:
+    - -std=c++2a
+
+esp32:
+  board: esp32-c3-devkitm-1
+  framework:
+    type: esp-idf
+
+logger:
+
+api:
+  encryption:
+    key: 0YvMTy0SOLS4FUHLwQf/T8xr5A+abTXmS7dOPe4FOZI=
+
+ota:
+  - platform: esphome
+    password: "supermini"
+
+wifi:
+  ssid: !secret wifi-ssid
+  password: !secret wifi-pswd
+  manual_ip:
+    static_ip: !secret ip-roomba
+    gateway: !secret wifi-gateway
+    subnet: !secret wifi-subnet
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "esp-roomba"
+    password: "XE41pKIHCeK1"
+
+captive_portal:
+
+external_components:
+  - source:
+      type: local
+      path: /home/bpbusque/CodeProject/ESPHomeRoomba/components
+
+uart:
+  id: uart_bus
+  tx_pin: GPIO20
+  rx_pin: GPIO21
+  baud_rate: 115200
+
+roomba:
+  id: rmb
+  uart_id: uart_bus
+  brc_pin: 199
+  lazy_650: true
+
+#binary_sensor:
+#  - platform: roomba
+#    roomba_id: rmb
+#
+#sensor:
+#  - platform: roomba
+#    roomba_id: rmb
+
+text_sensor:
+  - platform: roomba
+    roomba_id: rmb
+    activity:
+      name: Activity
+    charging_state:
+      name:  Charging State
+    oi_mode:
+      name: OI Mode
