@@ -1,8 +1,8 @@
 #pragma once
 
-#include <vector>
 #include <unordered_map>
 #include <utility>
+#include <vector>
 
 #include "esphome.h"
 #include "esphome/core/component.h"

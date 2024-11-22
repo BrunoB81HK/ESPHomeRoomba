@@ -1,13 +1,16 @@
 esphome:
   name: roomba
-#  platformio_options:
-#    build_flags:
-#    - -std=c++2a
+  platformio_options:
+    build_unflags:
+    - -std=c++11
+    build_flags:
+    - -std=c++2a
 
 esp32:
   board: esp32-c3-devkitm-1
   framework:
     type: arduino
+    version: latest
 
 logger:
 

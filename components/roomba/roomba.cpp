@@ -77,7 +77,7 @@ void RoombaComponent::update() {
 void RoombaComponent::dump_config() {}
 
 void RoombaComponent::write(Command command, void *data, size_t size) {
-  this->uart_->write(+command);
+  this->uart_->write_array(+command, 1);
   this->uart_->write_array(reinterpret_cast<uint8_t *>(data), size);
 }
 
