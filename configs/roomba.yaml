@@ -53,13 +53,151 @@ roomba:
   brc_pin: 199
   lazy_650: true
 
-#binary_sensor:
-#  - platform: roomba
-#    roomba_id: rmb
-#
-#sensor:
-#  - platform: roomba
-#    roomba_id: rmb
+binary_sensor:
+  - platform: roomba
+    roomba_id: rmb
+    vacuum:
+      name: Vacuum
+    left_wheel_drop:
+      name: Left Wheel Drop
+    right_wheel_drop:
+      name: Right Wheel Drop
+    left_bumps:
+      name: Left Bumps
+    right_bumps:
+      name: Right Bumps
+    wall:
+      name: Wall
+    left_cliff:
+      name: Left Cliff
+    front_left_cliff:
+      name: Front Left Cliff
+    front_right_cliff:
+      name: Front Right Cliff
+    right_cliff:
+      name: Right Cliff
+    virtual_wall:
+      name: Virtual Wall
+    side_brush_overcurrent:
+      name: Side Brush Overcurrent
+    main_brush_overcurrent:
+      name: Main Brush Overcurrent
+    right_wheel_overcurrent:
+      name: Right Wheel Overcurrent
+    left_wheel_overcurrent:
+      name: Left Wheel Overcurrent
+    clean_button:
+      name: Clean Button
+    spot_button:
+      name: Spot Button
+    dock_button:
+      name: Dock Button
+    minute_button:
+      name: Minute Button
+    hour_button:
+      name: Hour Button
+    day_button:
+      name: Day Button
+    schedule_button:
+      name: Schedule Button
+    clock_button:
+      name: Clock Button
+    internal_charger_charging_source_available:
+      name: Internal Charger Charging Source Available
+    home_base_charging_source_available:
+      name: Home Base Charging Source Available
+    song_playing:
+      name: Song Playing
+    left_light_bumper:
+      name: Left Light Bumper
+    left_front_light_bumper:
+      name: Left Front Light Bumper
+    left_center_light_bumper:
+      name: Left Center Light Bumper
+    right_center_light_bumper:
+      name: Right Center Light Bumper
+    right_front_light_bumper:
+      name: Right Front Light Bumper
+    right_light_bumper:
+      name: Right Light Bumper
+    toggling_stasis:
+      name: Toggling Stasis
+    disabled_stasis:
+      name: Disabled Stasis
+
+sensor:
+  - platform: roomba
+    roomba_id: rmb
+    dirt_detect:
+      name: Dirt Detect
+    ir_byte_omni:
+      name: Ir Byte Omni
+    ir_byte_left:
+      name: Ir Byte Left
+    ir_byte_right:
+      name: Ir Byte Right
+    distance:
+      name: Distance
+    angle:
+      name: Angle
+    voltage:
+      name: Voltage
+    current:
+      name: Current
+    battery_temperature:
+      name: Battery Temperature
+    battery_charge:
+      name: Battery Charge
+    battery_capacity:
+      name: Battery Capacity
+    battery_percent:
+      name: Battery Percent
+    wall_signal:
+      name: Wall Signal
+    cliff_left_signal:
+      name: Cliff Left Signal
+    cliff_front_left_signal:
+      name: Cliff Front Left Signal
+    cliff_front_right_signal:
+      name: Cliff Front Right Signal
+    cliff_right_signal:
+      name: Cliff Right Signal
+    song_number:
+      name: Song Number
+    number_of_stream_packets:
+      name: Number Of Stream Packets
+    requested_velocity:
+      name: Requested Velocity
+    requested_radius:
+      name: Requested Radius
+    requested_right_velocity:
+      name: Requested Right Velocity
+    requested_left_velocity:
+      name: Requested Left Velocity
+    left_encoder_counts:
+      name: Left Encoder Counts
+    right_encoder_counts:
+      name: Right Encoder Counts
+    light_bump_left_signal:
+      name: Light Bump Left Signal
+    light_bump_front_left_signal:
+      name: Light Bump Front Left Signal
+    light_bump_center_left_signal:
+      name: Light Bump Center Left Signal
+    light_bump_center_right_signal:
+      name: Light Bump Center Right Signal
+    light_bump_front_right_signal:
+      name: Light Bump Front Right Signal
+    light_bump_right_signal:
+      name: Light Bump Right Signal
+    left_motor_current:
+      name: Left Motor Current
+    right_motor_current:
+      name: Right Motor Current
+    main_brush_current:
+      name: Main Brush Current
+    side_brush_current:
+      name: Side Brush Current
 
 text_sensor:
   - platform: roomba

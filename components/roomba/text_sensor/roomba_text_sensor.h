@@ -1,6 +1,7 @@
 #pragma once
 
 #include "esphome/components/text_sensor/text_sensor.h"
+
 #include "../roomba.h"
 
 namespace esphome {

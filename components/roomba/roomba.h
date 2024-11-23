@@ -4,7 +4,6 @@
 #include <utility>
 #include <vector>
 
-#include "esphome.h"
 #include "esphome/core/component.h"
 #include "esphome/components/uart/uart.h"
 

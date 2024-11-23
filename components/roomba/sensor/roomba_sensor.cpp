@@ -5,10 +5,56 @@ namespace roomba {
 
 static const char *const TAG = "roomba.sensor";
 
+inline void update_state(sensor::Sensor *sensor, std::function<float()> func) {
+  if (sensor == nullptr)
+    return;
+
+  auto new_value = func();
+  if (new_value != sensor->state) {
+    sensor->publish_state(new_value);
+  }
+}
+
 void RoombaSensor::update() {
   if (!this->is_ready()) {
     return;
   }
+
+  update_state(this->dirt_detect_sensor_, [&]() { return 0.0f; });
+  update_state(this->ir_byte_omni_sensor_, [&]() { return 0.0f; });
+  update_state(this->ir_byte_left_sensor_, [&]() { return 0.0f; });
+  update_state(this->ir_byte_right_sensor_, [&]() { return 0.0f; });
+  update_state(this->distance_sensor_, [&]() { return 0.0f; });
+  update_state(this->angle_sensor_, [&]() { return 0.0f; });
+  update_state(this->voltage_sensor_, [&]() { return 0.0f; });
+  update_state(this->current_sensor_, [&]() { return 0.0f; });
+  update_state(this->battery_temperature_sensor_, [&]() { return 0.0f; });
+  update_state(this->battery_charge_sensor_, [&]() { return 0.0f; });
+  update_state(this->battery_capacity_sensor_, [&]() { return 0.0f; });
+  update_state(this->battery_percent_sensor_, [&]() { return 0.0f; });
+  update_state(this->wall_signal_sensor_, [&]() { return 0.0f; });
+  update_state(this->cliff_left_signal_sensor_, [&]() { return 0.0f; });
+  update_state(this->cliff_front_left_signal_sensor_, [&]() { return 0.0f; });
+  update_state(this->cliff_front_right_signal_sensor_, [&]() { return 0.0f; });
+  update_state(this->cliff_right_signal_sensor_, [&]() { return 0.0f; });
+  update_state(this->song_number_sensor_, [&]() { return 0.0f; });
+  update_state(this->number_of_stream_packets_sensor_, [&]() { return 0.0f; });
+  update_state(this->requested_velocity_sensor_, [&]() { return 0.0f; });
+  update_state(this->requested_radius_sensor_, [&]() { return 0.0f; });
+  update_state(this->requested_right_velocity_sensor_, [&]() { return 0.0f; });
+  update_state(this->requested_left_velocity_sensor_, [&]() { return 0.0f; });
+  update_state(this->left_encoder_counts_sensor_, [&]() { return 0.0f; });
+  update_state(this->right_encoder_counts_sensor_, [&]() { return 0.0f; });
+  update_state(this->light_bump_left_signal_sensor_, [&]() { return 0.0f; });
+  update_state(this->light_bump_front_left_signal_sensor_, [&]() { return 0.0f; });
+  update_state(this->light_bump_center_left_signal_sensor_, [&]() { return 0.0f; });
+  update_state(this->light_bump_center_right_signal_sensor_, [&]() { return 0.0f; });
+  update_state(this->light_bump_front_right_signal_sensor_, [&]() { return 0.0f; });
+  update_state(this->light_bump_right_signal_sensor_, [&]() { return 0.0f; });
+  update_state(this->left_motor_current_sensor_, [&]() { return 0.0f; });
+  update_state(this->right_motor_current_sensor_, [&]() { return 0.0f; });
+  update_state(this->main_brush_current_sensor_, [&]() { return 0.0f; });
+  update_state(this->side_brush_current_sensor_, [&]() { return 0.0f; });
 }
 
 void RoombaSensor::dump_config() {

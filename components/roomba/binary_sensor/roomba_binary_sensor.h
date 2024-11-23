@@ -1,6 +1,7 @@
 #pragma once
 
 #include "esphome/components/binary_sensor/binary_sensor.h"
+
 #include "../roomba.h"
 
 namespace esphome {

@@ -2,6 +2,7 @@
 
 #include <array>
 
+#include <Arduino.h>
 #include "esphome/core/helpers.h"
 #include "esphome/core/log.h"
 
@@ -74,10 +75,13 @@ void RoombaComponent::update() {
   this->was_docked_ = this->activity_ == Activity::Docked;
 }
 
-void RoombaComponent::dump_config() {}
+void RoombaComponent::dump_config() {
+  ESP_LOGCONFIG(TAG, "Roomba Component:");
+  LOG_UPDATE_INTERVAL(this);
+}
 
 void RoombaComponent::write(Command command, void *data, size_t size) {
-  this->uart_->write_array(+command, 1);
+  this->uart_->write_byte(+command);
   this->uart_->write_array(reinterpret_cast<uint8_t *>(data), size);
 }
 
@@ -87,19 +91,26 @@ bool RoombaComponent::read(void *data, size_t size) {
 
 void RoombaComponent::schedule(std::unordered_map<Weekday, std::pair<uint8_t, uint8_t>> schedule) {
   std::array<uint8_t, 15> schedule_array;
-  for (const auto &[day, time] : schedule) {
-    schedule_array[0] |= 1 << +day;
 
-    size_t index = 2 + (+day) * 2;
-    schedule_array[index] = time.first;
-    schedule_array[index + 1] = time.second;
+  for (const auto &entry : schedule) {
+    auto day = +entry.first;
+    const auto &time = entry.second;
+    const auto &hour = time.first;
+    const auto &minute = time.second;
+
+    schedule_array[0] |= 1 << day;
+
+    size_t index = 2 + day * 2;
+    schedule_array[index] = hour;
+    schedule_array[index + 1] = minute;
   }
 
-  this->write(Command::Schedule, schedule_array, sizeof(schedule_array));
+  this->write(Command::Schedule, schedule_array.data(), sizeof(schedule_array));
 }
 
 void RoombaComponent::set_day_time(Weekday day, uint8_t hour, uint8_t minute) {
-  this->write(Command::SetDayTime, {+day, hour, minutes}, 3);
+  std::array<uint8_t, 3> data = {+day, hour, minute};
+  this->write(Command::SetDayTime, data.data(), 3);
 }
 
 void RoombaComponent::drive() { this->write(Command::Drive); }
