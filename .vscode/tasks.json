@@ -8,7 +8,7 @@
             "args": [
                 "esphome@latest",
                 "compile",
-                "${workspaceFolder}/tests/roomba.yaml"
+                "${workspaceFolder}/configs/roomba.yaml"
             ],
             "problemMatcher": [],
             "group": {
