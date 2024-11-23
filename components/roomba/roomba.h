@@ -108,6 +108,16 @@ class RoombaClient {
 
  protected:
   RoombaComponent *roomba_;
+
+  template<typename Sensor, typename Func> inline void update_state(Sensor *sensor, Func func) {
+    if (sensor == nullptr)
+      return;
+
+    auto new_value = static_cast<decltype(sensor->state)>(func());
+    if (new_value != sensor->state) {
+      sensor->publish_state(new_value);
+    }
+  }
 };
 
 }  // namespace roomba

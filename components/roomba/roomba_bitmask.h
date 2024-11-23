@@ -12,6 +12,11 @@ constexpr Enum operator|(const Enum lhs, const Enum rhs) noexcept {
   return static_cast<Enum>(static_cast<underlying>(lhs) | static_cast<underlying>(rhs));
 }
 
+template<typename Enum, typename std::enable_if<std::is_enum<Enum>::value, bool>::type = true>
+constexpr bool operator|(const typename std::underlying_type<Enum>::type lhs, const Enum rhs) noexcept {
+  return static_cast<bool>(lhs | static_cast<typename std::underlying_type<Enum>::type>(rhs));
+}
+
 enum class LEDMask : uint8_t {
   Debris = 0x01 << 0,
   Spot = 0x01 << 1,

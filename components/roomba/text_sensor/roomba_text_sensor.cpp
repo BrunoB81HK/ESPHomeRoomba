@@ -56,26 +56,17 @@ inline std::string to_string(OIMode oi_mode) {
   }
 }
 
-inline void update_state(text_sensor::TextSensor *sensor, std::function<std::string()> func) {
-  if (sensor == nullptr)
-    return;
-
-  auto new_value = func();
-  if (new_value != sensor->state) {
-    sensor->publish_state(new_value);
-  }
-}
-
 void RoombaTextSensor::update() {
   if (!this->is_ready()) {
     return;
   }
 
-  update_state(this->activity_sensor_, [&]() { return to_string(this->roomba_->activity_); });
-  update_state(this->charging_state_sensor_,
-               [&]() { return to_string(static_cast<ChargeState>(this->roomba_->sensors_values_.charging_state)); });
-  update_state(this->oi_mode_sensor_,
-               [&]() { return to_string(static_cast<OIMode>(this->roomba_->sensors_values_.oi_mode)); });
+  this->update_state(this->activity_sensor_, [&]() { return to_string(this->roomba_->activity_); });
+  this->update_state(this->charging_state_sensor_, [&]() {
+    return to_string(static_cast<ChargeState>(this->roomba_->sensors_values_.charging_state));
+  });
+  this->update_state(this->oi_mode_sensor_,
+                     [&]() { return to_string(static_cast<OIMode>(this->roomba_->sensors_values_.oi_mode)); });
 }
 
 void RoombaTextSensor::dump_config() {

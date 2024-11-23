@@ -59,8 +59,6 @@ class RoombaSensor : public PollingComponent, public RoombaClient {
  protected:
   sensor::Sensor *dirt_detect_sensor_{nullptr};
   sensor::Sensor *ir_byte_omni_sensor_{nullptr};
-  sensor::Sensor *ir_byte_left_sensor_{nullptr};
-  sensor::Sensor *ir_byte_right_sensor_{nullptr};
   sensor::Sensor *distance_sensor_{nullptr};
   sensor::Sensor *angle_sensor_{nullptr};
   sensor::Sensor *voltage_sensor_{nullptr};
@@ -88,6 +86,8 @@ class RoombaSensor : public PollingComponent, public RoombaClient {
   sensor::Sensor *light_bump_center_right_signal_sensor_{nullptr};
   sensor::Sensor *light_bump_front_right_signal_sensor_{nullptr};
   sensor::Sensor *light_bump_right_signal_sensor_{nullptr};
+  sensor::Sensor *ir_byte_left_sensor_{nullptr};
+  sensor::Sensor *ir_byte_right_sensor_{nullptr};
   sensor::Sensor *left_motor_current_sensor_{nullptr};
   sensor::Sensor *right_motor_current_sensor_{nullptr};
   sensor::Sensor *main_brush_current_sensor_{nullptr};
