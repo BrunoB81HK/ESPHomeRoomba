@@ -31,8 +31,8 @@ struct __attribute__((packed)) SensorsValues {
   uint16_t cliff_front_left_signal{0};         // #29 - Sensor
   uint16_t cliff_front_right_signal{0};        // #30 - Sensor
   uint16_t cliff_right_signal{0};              // #31 - Sensor
-  uint32_t unused2{0};                         // #32   ** Should be uint24_t (3 bytes) **
-  uint16_t unused3{0};                         // #33   ** Should be uint24_t (3 bytes) **
+  uint16_t unused2{0};                         // #32/#33   ** Should be uint12_t (3 bytes) **
+  uint8_t unused3{0};                          // #33   ** Should be uint12_t (3 bytes) **
   uint8_t charging_sources_available{0};       // #34 - Binary sensors (x2)
   uint8_t oi_mode{0};                          // #35 - Text Sensor
   uint8_t song_number{0};                      // #36 - Sensor
