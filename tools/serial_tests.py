@@ -4,6 +4,7 @@
 #   "pyserial",
 # ]
 # ///
+import argparse
 import enum
 import struct
 
@@ -116,58 +117,58 @@ class SensorPackets(enum.IntEnum):
 
 class RoombaSerial:
     SNSR_PCKT_META = {
-        SensorPackets.BumpsAndWheelDrops: 1,
-        SensorPackets.Wall: 1,
-        SensorPackets.CliffLeft: 1,
-        SensorPackets.CliffFrontLeft: 1,
-        SensorPackets.CliffFrontRight: 1,
-        SensorPackets.CliffRight: 1,
-        SensorPackets.VirtualWall: 1,
-        SensorPackets.WheelOvercurrents: 1,
-        SensorPackets.DirtDetect: 1,
-        SensorPackets.Unused1: 1,
-        SensorPackets.IRByteOmni: 1,
-        SensorPackets.IRByteLeft: 1,
-        SensorPackets.IRByteRight: 1,
-        SensorPackets.Buttons: 1,
-        SensorPackets.Distance: 2,
-        SensorPackets.Angle: 2,
-        SensorPackets.ChargingState: 1,
-        SensorPackets.Voltage: 2,
-        SensorPackets.Current: 2,
-        SensorPackets.BatteryTemperature: 1,
-        SensorPackets.BatteryCharge: 2,
-        SensorPackets.BatteryCapacity: 2,
-        SensorPackets.WallSignal: 2,
-        SensorPackets.CliffLeftSignal: 2,
-        SensorPackets.CliffFrontLeftSignal: 2,
-        SensorPackets.CliffFrontRightSignal: 2,
-        SensorPackets.CliffRightSignal: 2,
-        SensorPackets.Unused2: 1,
-        SensorPackets.Unused3: 2,
-        SensorPackets.ChargingSourcesAvailable: 1,
-        SensorPackets.OIMode: 1,
-        SensorPackets.SongNumber: 1,
-        SensorPackets.SongPlaying: 1,
-        SensorPackets.NumberOfStreamPackets: 1,
-        SensorPackets.RequestedVelocity: 2,
-        SensorPackets.RequestedRadius: 2,
-        SensorPackets.RequestedRightVelocity: 2,
-        SensorPackets.RequestedLeftVelocity: 2,
-        SensorPackets.LeftEncoderCounts: 2,
-        SensorPackets.RightEncoderCounts: 2,
-        SensorPackets.LightBumper: 1,
-        SensorPackets.LightBumpLeftSignal: 2,
-        SensorPackets.LightBumpFrontLeftSignal: 2,
-        SensorPackets.LightBumpCenterLeftSignal: 2,
-        SensorPackets.LightBumpCenterRightSignal: 2,
-        SensorPackets.LightBumpFrontRightSignal: 2,
-        SensorPackets.LightBumpRightSignal: 2,
-        SensorPackets.LeftMotorCurrent: 2,
-        SensorPackets.RightMotorCurrent: 2,
-        SensorPackets.MainBrushCurrent: 2,
-        SensorPackets.SideBrushCurrent: 2,
-        SensorPackets.Stasis: 1,
+        SensorPackets.BumpsAndWheelDrops: (1, "B"),
+        SensorPackets.Wall: (1, "B"),
+        SensorPackets.CliffLeft: (1, "B"),
+        SensorPackets.CliffFrontLeft: (1, "B"),
+        SensorPackets.CliffFrontRight: (1, "B"),
+        SensorPackets.CliffRight: (1, "B"),
+        SensorPackets.VirtualWall: (1, "B"),
+        SensorPackets.WheelOvercurrents: (1, "B"),
+        SensorPackets.DirtDetect: (1, "B"),
+        SensorPackets.Unused1: (1, "B"),
+        SensorPackets.IRByteOmni: (1, "B"),
+        SensorPackets.Buttons: (1, "B"),
+        SensorPackets.Distance: (2, "h"),
+        SensorPackets.Angle: (2, "h"),
+        SensorPackets.ChargingState: (1, "B"),
+        SensorPackets.Voltage: (2, "H"),
+        SensorPackets.Current: (2, "h"),
+        SensorPackets.BatteryTemperature: (1, "b"),
+        SensorPackets.BatteryCharge: (2, "H"),
+        SensorPackets.BatteryCapacity: (2, "H"),
+        SensorPackets.WallSignal: (2, "H"),
+        SensorPackets.CliffLeftSignal: (2, "H"),
+        SensorPackets.CliffFrontLeftSignal: (2, "H"),
+        SensorPackets.CliffFrontRightSignal: (2, "H"),
+        SensorPackets.CliffRightSignal: (2, "H"),
+        SensorPackets.Unused2: (1, "B"),
+        SensorPackets.Unused3: (2, "H"),
+        SensorPackets.ChargingSourcesAvailable: (1, "B"),
+        SensorPackets.OIMode: (1, "B"),
+        SensorPackets.SongNumber: (1, "B"),
+        SensorPackets.SongPlaying: (1, "B"),
+        SensorPackets.NumberOfStreamPackets: (1, "B"),
+        SensorPackets.RequestedVelocity: (2, "h"),
+        SensorPackets.RequestedRadius: (2, "h"),
+        SensorPackets.RequestedRightVelocity: (2, "h"),
+        SensorPackets.RequestedLeftVelocity: (2, "h"),
+        SensorPackets.LeftEncoderCounts: (2, "h"),
+        SensorPackets.RightEncoderCounts: (2, "h"),
+        SensorPackets.LightBumper: (1, "B"),
+        SensorPackets.LightBumpLeftSignal: (2, "H"),
+        SensorPackets.LightBumpFrontLeftSignal: (2, "H"),
+        SensorPackets.LightBumpCenterLeftSignal: (2, "H"),
+        SensorPackets.LightBumpCenterRightSignal: (2, "H"),
+        SensorPackets.LightBumpFrontRightSignal: (2, "H"),
+        SensorPackets.LightBumpRightSignal: (2, "H"),
+        SensorPackets.IRByteLeft: (1, "B"),
+        SensorPackets.IRByteRight: (1, "B"),
+        SensorPackets.LeftMotorCurrent: (2, "h"),
+        SensorPackets.RightMotorCurrent: (2, "h"),
+        SensorPackets.MainBrushCurrent: (2, "h"),
+        SensorPackets.SideBrushCurrent: (2, "h"),
+        SensorPackets.Stasis: (1, "B"),
     }
 
     SNSR_PCKT_GROUP_META = {
@@ -185,7 +186,7 @@ class RoombaSerial:
     }
 
     def __init__(
-        self, port: str = "/dev/ttyUSB0", baudrate: int = 115200, timeout: float = 0.2
+        self, port: str = "/dev/ttyUSB0", baudrate: int = 115200, timeout: float = 0.1
     ) -> None:
         self.serial = serial.Serial(port, baudrate, timeout=timeout)
 
@@ -251,7 +252,7 @@ class RoombaSerial:
     def get_header(self) -> str:
         header = "| ID  |"
         separator = "|:---:!"
-        for packet, size in RoombaSerial.SNSR_PCKT_META.items():
+        for packet, (size, _) in RoombaSerial.SNSR_PCKT_META.items():
             header += f" {packet.value:02d} |"
             separator += ":--:|"
             for _ in range(size - 1):
@@ -266,7 +267,7 @@ class RoombaSerial:
 
         if packet_id in RoombaSerial.SNSR_PCKT_GROUP_META.keys():
             start, stop = RoombaSerial.SNSR_PCKT_GROUP_META[packet_id]
-            for packet, size in RoombaSerial.SNSR_PCKT_META.items():
+            for packet, (size, _) in RoombaSerial.SNSR_PCKT_META.items():
                 if packet.value < start:
                     for _ in range(size):
                         line += "    |"
@@ -274,13 +275,13 @@ class RoombaSerial:
             for v in values:
                 line += f" {v:02X} |"
 
-            for packet, size in RoombaSerial.SNSR_PCKT_META.items():
+            for packet, (size, _) in RoombaSerial.SNSR_PCKT_META.items():
                 if packet.value > stop:
                     for _ in range(size):
                         line += "    |"
 
         elif packet_id in RoombaSerial.SNSR_PCKT_META.keys():
-            for packet, size in RoombaSerial.SNSR_PCKT_META.items():
+            for packet, (size, _) in RoombaSerial.SNSR_PCKT_META.items():
                 if packet_id == packet:
                     for v in values:
                         line += f" {v:02X} |"
@@ -302,14 +303,174 @@ class RoombaSerial:
     def print_lines(self, packet_ids: list[SensorPackets]) -> None:
         print("\n".join(self.get_lines(packet_ids)))
 
+    def spin(self, packet_id: SensorPackets, new_line: bool = True) -> None:
+        try:
+            while True:
+                values = self.get_sensors_packets(packet_id)
+                print(
+                    "".join([f"{v:02X}" for v in values]),
+                    end="\n" if new_line else "\r",
+                )
+        except KeyboardInterrupt:
+            ...
 
-def main() -> None:
+    def unpack_spin(self, packet_id: SensorPackets, new_line: bool = True) -> None:
+        fmt = "xx"
+        if packet_id in RoombaSerial.SNSR_PCKT_META.keys():
+            _, fmt = RoombaSerial.SNSR_PCKT_META[packet_id]
+        elif packet_id in RoombaSerial.SNSR_PCKT_GROUP_META.keys():
+            s, e = RoombaSerial.SNSR_PCKT_GROUP_META[packet_id]
+            for i in range(s, e + 1):
+                _, f = RoombaSerial.SNSR_PCKT_META[SensorPackets(i)]
+                fmt += f
+        fmt += "xxxxxx"
+        try:
+            while True:
+                buffer = self.get_sensors_packets(packet_id)
+                print(len(buffer))
+                print(struct.unpack(fmt, buffer))
+        except KeyboardInterrupt:
+            ...
+
+    def full_spin(self) -> None:
+        try:
+            while True:
+                buffer = self.get_sensors_packets(SensorPackets.Group7to58)
+                print(len(buffer))
+                print("".join([f"{v:02X}" for v in buffer]))
+                packet = struct.unpack(
+                    "=BBBBBBBBBBBhhBHhxbxHHHHHHHhbBBBBBhhhhhhBHHHHHHBBhhhhBxxxxxxxxxxxx",
+                    buffer,
+                )
+                (
+                    bumps_and_wheel_drops,
+                    wall,
+                    cliff_left,
+                    cliff_front_left,
+                    cliff_front_right,
+                    cliff_right,
+                    virtual_wall,
+                    wheel_overcurrents,
+                    dirt_detect,
+                    # _,
+                    ir_byte_omni,
+                    buttons,
+                    distance,
+                    angle,
+                    charging_state,
+                    voltage,
+                    current,
+                    battery_temperature,
+                    battery_charge,
+                    battery_capacity,
+                    wall_signal,
+                    cliff_left_signal,
+                    cliff_front_left_signal,
+                    cliff_front_right_signal,
+                    cliff_right_signal,
+                    _,
+                    _,
+                    charging_sources_availab,
+                    oi_mode,
+                    song_number,
+                    song_playing,
+                    number_of_stream_packets,
+                    requested_velocity,
+                    requested_radius,
+                    requested_right_velocity,
+                    requested_left_velocity,
+                    left_encoder_counts,
+                    right_encoder_counts,
+                    light_bumper,
+                    light_bump_left_signal,
+                    light_bump_front_left_sign,
+                    light_bump_center_left_sign,
+                    light_bump_center_right_si,
+                    light_bump_front_right_sign,
+                    light_bump_right_signal,
+                    ir_byte_left,
+                    ir_byte_right,
+                    left_motor_current,
+                    right_motor_current,
+                    main_brush_current,
+                    side_brush_current,
+                    stasis,
+                    *_,
+                ) = packet
+                print(
+                    f"{bumps_and_wheel_drops=:} | {wall=:} | {cliff_left=:} | {cliff_front_left=:} | {cliff_front_right=:} | {cliff_right=:} | {virtual_wall=:} | {wheel_overcurrents=:} | {dirt_detect=:}"
+                )
+                print(
+                    f"{ir_byte_omni=:} | {buttons=:} | {distance=:} | {angle=:} | {charging_state=:}"
+                )
+                print(
+                    f"{voltage=:} | {current=:} | {battery_temperature=:} | {battery_charge=:} | {battery_capacity=:}"
+                )
+                print(
+                    f"{wall_signal=:} | {cliff_left_signal=:} | {cliff_front_left_signal=:} | {cliff_front_right_signal=:} | {cliff_right_signal=:}"
+                )
+                print(
+                    f"{charging_sources_availab=:} | {oi_mode=:} | {song_number=:} | {song_playing=:} | {number_of_stream_packets=:}"
+                )
+                print(
+                    f"{requested_velocity=:} | {requested_radius=:} | {requested_right_velocity=:} | {requested_left_velocity=:}"
+                )
+                print(f"{left_encoder_counts=:} | {right_encoder_counts=:}")
+                print(
+                    f"{light_bumper=:} | {light_bump_left_signal=:} | {light_bump_front_left_sign=:} | {light_bump_center_left_sign=:} | {light_bump_center_right_si=:} | {light_bump_front_right_sign=:} | {light_bump_right_signal=:}"
+                )
+                print(
+                    f"{ir_byte_left=:} | {ir_byte_right=:} | {left_motor_current=:} | {right_motor_current=:} | {main_brush_current=:} | {side_brush_current=:} | {stasis=:}"
+                )
+                print()
+                print()
+
+        except KeyboardInterrupt:
+            ...
+
+
+def table_mode() -> None:
     with RoombaSerial() as s:
         s.print_header()
         s.print_lines(list(SensorPackets))
-        # print("---------")
-        # for i in range(108):
-        #     s.send_command_data_and_read(Command.Sensors, i, True)
+
+
+def live_mode() -> None:
+    with RoombaSerial() as s:
+        s.spin(SensorPackets.Group43to58, False)
+
+
+def unpack_mode() -> None:
+    with RoombaSerial() as s:
+        s.unpack_spin(SensorPackets.Group7to58, False)
+
+
+def full_mode() -> None:
+    with RoombaSerial() as s:
+        s.full_spin()
+
+
+def get_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "mode",
+        type=str,
+        choices=["table", "live", "unpack", "full"],
+        help="The mode to launch the tool in.",
+    )
+    return parser.parse_args()
+
+
+def main() -> None:
+    args = get_args()
+    if args.mode == "table":
+        table_mode()
+    elif args.mode == "live":
+        live_mode()
+    elif args.mode == "unpack":
+        unpack_mode()
+    elif args.mode == "full":
+        full_mode()
 
 
 if __name__ == "__main__":

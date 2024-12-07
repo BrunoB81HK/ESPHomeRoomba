@@ -198,8 +198,6 @@ enum class SensorPackets : uint8_t {
   DirtDetect = 15,                  // 1 byte(s), unsigned
   Unused1 = 16,                     // 1 byte(s)
   IRByteOmni = 17,                  // 1 byte(s), unsigned
-  IRByteLeft = 52,                  // 1 byte(s), unsigned
-  IRByteRight = 53,                 // 1 byte(s), unsigned
   Buttons = 18,                     // 1 byte(s), unsigned
   Distance = 19,                    // 2 byte(s), signed
   Angle = 20,                       // 2 byte(s), signed
@@ -234,11 +232,13 @@ enum class SensorPackets : uint8_t {
   LightBumpCenterRightSignal = 49,  // 2 byte(s), unsigned
   LightBumpFrontRightSignal = 50,   // 2 byte(s), unsigned
   LightBumpRightSignal = 51,        // 2 byte(s), unsigned
+  IRByteLeft = 52,                  // 1 byte(s), unsigned
+  IRByteRight = 53,                 // 1 byte(s), unsigned
   LeftMotorCurrent = 54,            // 2 byte(s), signed, mA
   RightMotorCurrent = 55,           // 2 byte(s), signed, mA
   MainBrushCurrent = 56,            // 2 byte(s), signed, mA
   SideBrushCurrent = 57,            // 2 byte(s), signed, mA
-  Stasis = 58,                      // 2 byte(s), signed, mA
+  Stasis = 58,                      // 1 byte(s), unsigned, mA
 };
 
 enum class ChargeState : uint8_t {
